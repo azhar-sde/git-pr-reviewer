@@ -40,35 +40,49 @@ addBtn.addEventListener('click', () => {
 });
 
 // This function will be injected into the page
-function addReviewersToPR(reviewers) {
-  const addReviewersButton = document.querySelector('summary[aria-label="Add reviewers"]');
-  if (!addReviewersButton) {
-    alert('Could not find the add reviewers button.');
-    return;
-  }
-  addReviewersButton.click();
+async function addReviewersToPR(reviewers) {
+    const btn = document.querySelector('[aria-label="Select reviewers"]') ||
+                document.querySelector('summary[aria-label="Add reviewers"]');
 
-  setTimeout(() => {
-    const input = document.getElementById('review-filter-field');
+    if (!btn) {
+        alert('Could not find the "Add reviewers" button. GitHub UI might have changed.');
+        return;
+    }
+    btn.click();
+
+    await new Promise(r => setTimeout(r, 300));
+
+    const input = document.querySelector('input#review-filter-field');
     if (!input) {
-      alert('Could not find the reviewer filter input.');
-      return;
+        alert('Could not find the reviewer search input field.');
+        // try to close the dialog
+        document.body.click();
+        return;
     }
 
     for (const reviewer of reviewers) {
-      input.value = reviewer;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.value = reviewer;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
 
-      setTimeout(() => {
-        const userOption = document.querySelector(`[data-user-id][role="option"]`);
-        if (userOption) {
-          userOption.click();
+        await new Promise(r => setTimeout(r, 600)); // Wait for suggestions
+
+        const menuItems = document.querySelectorAll('form[aria-label="Request a review"] [role="option"]');
+        let found = false;
+        for (const item of menuItems) {
+            if (item.textContent.trim().toLowerCase().includes(reviewer.toLowerCase())) {
+                item.click();
+                found = true;
+                break;
+            }
         }
-      }, 500);
+
+        if (!found) {
+            alert(`Reviewer "${reviewer}" not found or not eligible.`);
+        }
+
+        await new Promise(r => setTimeout(r, 400));
     }
 
-    setTimeout(() => {
-      addReviewersButton.click(); // Close the dropdown
-    }, 1000);
-  }, 500);
+    // Click the body to close the menu
+    document.body.click();
 }
