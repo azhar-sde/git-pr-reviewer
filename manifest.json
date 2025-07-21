@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "GitHub PR Reviewer Adder",
+  "name": "GitHub Bulk Reviewer Adder",
   "version": "1.0",
-  "description": "Add configured reviewers to GitHub PRs with one click.",
-  "permissions": ["scripting", "activeTab"],
+  "description": "Add multiple reviewers to a GitHub pull request in bulk.",
+  "permissions": ["scripting", "activeTab", "storage"],
   "host_permissions": ["https://github.com/*/*/pull/*"],
   "action": {
     "default_popup": "popup.html",
@@ -16,4 +16,4 @@
       "run_at": "document_idle"
     }
   ]
-} 
+}
