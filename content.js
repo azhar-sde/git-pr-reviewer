@@ -27,12 +27,12 @@ async function addReviewers(reviewers) {
         });
     };
 
-    const addReviewersButton = document.querySelector('summary[aria-label="Add reviewers"], summary[aria-label="Select reviewers"]');
+    const addReviewersButton = document.querySelector('details#reviewers-select-menu > summary');
     if (!addReviewersButton) {
-        return alert('Could not find the "Add reviewers" or "Select reviewers" button. GitHub UI might have changed.');
+        return alert('Could not find the "Reviewers" dropdown button. GitHub UI might have changed.');
     }
     addReviewersButton.click();
-    console.log('Clicked the add/select reviewers button.');
+    console.log('Clicked the Reviewers dropdown button.');
 
     try {
         const input = await waitForElement('input#review-filter-field');
@@ -57,9 +57,9 @@ async function addReviewers(reviewers) {
                 let foundAndClicked = false;
 
                 for (const item of menuItems) {
-                    const usernameElement = item.querySelector('.text-bold');
-                    if (usernameElement && usernameElement.textContent.trim().toLowerCase() === reviewer.toLowerCase()) {
-                        console.log(`Found matching option for "${reviewer}": "${item.textContent}"`);
+                    const usernameSpan = item.querySelector('.js-username');
+                    if (usernameSpan && usernameSpan.textContent.trim().toLowerCase() === reviewer.toLowerCase()) {
+                        console.log(`Found matching option for "${reviewer}": "${usernameSpan.textContent}"`);
                         item.click();
                         foundAndClicked = true;
                         break;
@@ -81,7 +81,7 @@ async function addReviewers(reviewers) {
             await new Promise(r => setTimeout(r, 300));
         }
 
-        const closeBtn = document.querySelector('summary[aria-label="Add reviewers"], summary[aria-label="Select reviewers"]');
+        const closeBtn = document.querySelector('details#reviewers-select-menu > summary');
         if(closeBtn) {
             closeBtn.click();
             console.log('Closed the reviewers dialog.');
