@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub PR Reviewer Adder",
+  "version": "1.0",
+  "description": "Add configured reviewers to GitHub PRs with one click.",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["https://github.com/*/*/pull/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*/*/pull/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+} 
