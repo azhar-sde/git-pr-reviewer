@@ -1,3 +1,9 @@
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.action === 'add_reviewers' && Array.isArray(msg.reviewers)) {
+    addReviewers(msg.reviewers);
+  }
+});
+
 async function addReviewers(reviewers) {
   const btn = document.querySelector('[aria-label="Select reviewers"]') ||
     document.querySelector('summary[aria-label="Add reviewers"]');
@@ -9,9 +15,7 @@ async function addReviewers(reviewers) {
   for (const reviewer of reviewers) {
     input.value = reviewer;
     input.dispatchEvent(new Event('input', { bubbles: true }));
-    await new Promise(r => setTimeout(r, 600)); // Wait for suggestions to appear
-
-    // Find the suggestion that matches the reviewer
+    await new Promise(r => setTimeout(r, 600)); // Wait for suggestions
     const menuItems = document.querySelectorAll('form[aria-label="Request a review"] [role="option"]');
     let found = false;
     for (const item of menuItems) {
@@ -26,6 +30,5 @@ async function addReviewers(reviewers) {
     }
     await new Promise(r => setTimeout(r, 400));
   }
-  // Close the reviewers dropdown
   document.body.click();
 }
