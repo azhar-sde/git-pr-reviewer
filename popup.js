@@ -62,12 +62,12 @@ async function addReviewersToPR(reviewers) {
         });
     };
 
-    const settingsButton = document.querySelector('#reviewers-select-menu button.discussion-sidebar-heading-action');
-    if (!settingsButton) {
-        return alert('Could not find the reviewers settings button (gear icon). GitHub UI might have changed.');
+    const addReviewersButton = document.querySelector('summary[aria-label="Add reviewers"], summary[aria-label="Select reviewers"]');
+    if (!addReviewersButton) {
+        return alert('Could not find the "Add reviewers" or "Select reviewers" button. GitHub UI might have changed.');
     }
-    settingsButton.click();
-    console.log('Clicked the reviewers settings button.');
+    addReviewersButton.click();
+    console.log('Clicked the add/select reviewers button.');
 
     try {
         const input = await waitForElement('input#review-filter-field');
@@ -92,9 +92,8 @@ async function addReviewersToPR(reviewers) {
                 let foundAndClicked = false;
 
                 for (const item of menuItems) {
-                    const itemText = item.textContent.trim().toLowerCase();
-                    const reviewerLower = reviewer.toLowerCase();
-                    if (itemText.includes(reviewerLower)) {
+                    const usernameElement = item.querySelector('.text-bold');
+                    if (usernameElement && usernameElement.textContent.trim().toLowerCase() === reviewer.toLowerCase()) {
                         console.log(`Found matching option for "${reviewer}": "${item.textContent}"`);
                         item.click();
                         foundAndClicked = true;
@@ -117,7 +116,7 @@ async function addReviewersToPR(reviewers) {
             await new Promise(r => setTimeout(r, 300));
         }
 
-        const closeBtn = document.querySelector('#reviewers-select-menu button.discussion-sidebar-heading-action');
+        const closeBtn = document.querySelector('summary[aria-label="Add reviewers"], summary[aria-label="Select reviewers"]');
         if(closeBtn) {
             closeBtn.click();
             console.log('Closed the reviewers dialog.');
